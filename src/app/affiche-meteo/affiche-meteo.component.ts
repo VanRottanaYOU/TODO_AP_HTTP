@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import GithubApiService from "../services/github-api.service";
-import {HttpClient, HttpParams,HttpHeaders, HttpClientModule} from "@angular/common/http";
+import { Component, OnInit ,Input, Output, EventEmitter} from '@angular/core';
+import { Http }  from '@angular/http';
+import { TodosService } from '../services/TodosService';
+import { TodoServicesObservable } from '../services/TodoServicesObservable';
+import Todo from '../classes/Todo';
 
 @Component({
   selector: 'app-affiche-meteo',
@@ -9,25 +11,82 @@ import {HttpClient, HttpParams,HttpHeaders, HttpClientModule} from "@angular/com
 })
 export class AfficheMeteoComponent implements OnInit {
 
-  results: string;
+  listeTodos: Array<Todo> = [];
+  monTodo : Todo;
+  todoTitle:string;
+  todoId:number;
+  monTodoId:number;
 
-  getGitHub(){
-    const headers = new HttpHeaders()
-    .set('Content-Type', 'application/json')
-    .set('Access-Control-Allow-Origin', 'http://localhost:4200');
-    this.http.get("http://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b1b15e88fa797225412429c1c50c122a1",{ headers })
-    .subscribe(data => {this.results = data['name'];});
-    return this.results;
+  constructor(private http :Http, private todosService:TodosService, private TodoServicesObservable:TodoServicesObservable) { }
 
-    /*return this.http.get("https://api.github.com/users/vanrottanayou?access_token=e6142dfa0fe82e15704834b952eb9fab44583d00")
-    .subscribe(data => {this.results = data['login'];});*/
-    /*return this.GithubApiService.getUser('VanRottanaYOU')
-    .subscribe(data => {this.results = data['login'];});*/
+  addTodo() {
+    this.TodoServicesObservable.addTodo(this.todoTitle)
+    .subscribe(response => response.json(),
+               error => console.log(error),
+               () => (this.TodoServicesObservable.getTodos()
+                       .subscribe(response => {this.listeTodos=response.json()})
+                      ) 
+              );        
+  }
+  
+  updateTodo(){
+    this.TodoServicesObservable.getTodo(this.todoId)
+    .subscribe(resTodo => this.monTodo=resTodo,
+               error => console.log(error),
+               ()=>(this.TodoServicesObservable.updateTodo(this.monTodo)
+                     .subscribe(response => response.json(),
+                                error => console.log(error),
+                                 () => (this.TodoServicesObservable.getTodos()
+                                         .subscribe(response => {this.listeTodos=response.json()})
+                                       ) 
+                                )
+                    ) 
+               );
   }
 
-  constructor(private GithubApiService:GithubApiService,private http: HttpClient) { }
+  deleteTodo(){
+    this.TodoServicesObservable.getTodo(this.monTodoId)
+    .subscribe(resTodo => this.monTodo=resTodo,
+               error => console.log(error),
+               ()=>(this.TodoServicesObservable.deleteTodo(this.monTodoId)
+                     .subscribe(response => response.json(),
+                                error => console.log(error),
+                                 () => (this.TodoServicesObservable.getTodos()
+                                         .subscribe(response => {this.listeTodos=response.json()})
+                                       ) 
+                                )
+                    ) 
+               );
+  }
+
+ /*  deleteAllTodo(){
+    
+  } */
 
   ngOnInit() {
+
+    this.TodoServicesObservable.getTodos()
+    .subscribe(response => response.json(),
+    error => console.log(error),
+    () => (this.TodoServicesObservable.getTodos()
+            .subscribe(response => {this.listeTodos=response.json()})
+           ) 
+    );  
+
+    console.log(" getTodo n° 3 "+this.TodoServicesObservable.getTodo(5)
+    .subscribe(resTodo => this.monTodo=resTodo,
+      error => console.log(error),
+     ()=>console.log(this.monTodo))
+    );
+
+   /* this.TodoServicesObservable.getTodo(5)
+    .subscribe(resTodo => this.monTodo=resTodo,
+      error => console.log(error),
+     ()=>(this.TodoServicesObservable.updateTodo(this.monTodo)
+     .subscribe(response => {response.json()})
+    ) 
+    );*/
+
   }
 
 }

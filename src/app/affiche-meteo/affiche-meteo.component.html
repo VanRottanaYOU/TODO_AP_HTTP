@@ -1,6 +1,21 @@
 <div>
-  <button (click)="getGitHub()">Afficher Meteo</button>
+  <input placeholder="entrer une action" [(ngModel)]="todoTitle" />
+  <button (click)="addTodo()">Ajouter Todo</button>
+  <button (click)="deleteAllTodo()">Supprimer tous les Todo</button>
 </div>
-<p>
-  {{results}} 
-</p>
+<div>
+    <input placeholder="entrer un id" [(ngModel)]="todoId" />
+    <button (click)="updateTodo()">Mettre à jour le Todo</button>
+</div>
+<div>
+    <input placeholder="entrer un id" [(ngModel)]="monTodoId" />
+    <button (click)="deleteTodo()">Effacer le Todo</button>
+</div>
+<h1>Liste des TODOS :</h1>
+<ul>
+  <li *ngFor="let todo of listeTodos">
+    <p>ID : {{todo.id}}  TITRE : {{todo.title}} FAIT :{{todo.isDone}}</p>
+  </li>
+</ul>
+
+

@@ -1,22 +1,25 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppComponent } from './app.component';
-import GithubApiService from "./services/github-api.service";
-import { HttpClientModule } from '@angular/common/http';
 import { AfficheMeteoComponent } from './affiche-meteo/affiche-meteo.component';
+import { TodosService } from './services/TodosService';
+import { TodoServicesObservable } from './services/TodoServicesObservable';
+import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AfficheMeteoComponent
+    AfficheMeteoComponent   
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpModule,
+    FormsModule
   ],
   providers: [
-    GithubApiService
+    TodosService,
+    TodoServicesObservable
   ],
   bootstrap: [AppComponent]
 })
